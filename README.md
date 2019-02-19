@@ -10,11 +10,11 @@ The repository is composed of following parts:
   - [Utility vmxlab.py that combines all the APIs in simple command line tool](#vmxlab-utility)
   - [Python modules implementing different APIs that can be used in your programs](#modules)
 
-# shell scripts
+## shell scripts
 
 These scripts are very simple scripts using the `vmxlab.py` utility described bellow. Those are not meant to be generic scripts at all, but they rather show what kind of commands with what parameters can be useful when setting up the lab. They also do not do any input validation and have some hardcoded values that expect certain setting of vCenter/NSX/ESxi/FortiGate.
 
-## prepare_esxi.sh
+### prepare_esxi.sh
 
 Guides you though initial setup of ESXi VM after deploying in DHCP VLAN. In two phases it removed the saved invalid MAC addresses and the default small local datastore.
 
@@ -42,7 +42,7 @@ Deleting local datastore "datastore1"
 - Done
 ```
 
-## prepare_vcenter.sh
+### prepare_vcenter.sh
 
 Initial configuration of brand new vCenter. Creates datastore and cluster and allows to register all ESXi hosts in the cluster. 
 
@@ -87,7 +87,7 @@ Created NFS datastore "shared"
 - Done
 ```
 
-## prepare_nsx.sh
+### prepare_nsx.sh
 
 First it creates a dedicated portgroup for synchronization network between FortiGate Service Manager and all VMX agent VMs.
 
@@ -156,7 +156,7 @@ Note: At this moment everything is prepared but no traffic is redirected to Fort
       To redirect traffic, you need to create a Security Group and apply it to default Policy.
 ```
 
-# vmxlab utility
+## vmxlab utility
 
 `vmxlab.py` is CLI based utility that calls the procedures from the modules described bellow.
 
@@ -173,7 +173,7 @@ optional arguments:
   --vlan DVSWITCH_VLANID       VLAN ID
 ```
 
-## On ESXi host
+### On ESXi host
 
 ```
 $ ./vmxlab.py esxi -h
@@ -200,7 +200,7 @@ optional arguments:
   --sshport SSHPORT     ESXi ssh port
 ```
 
-## On vCenter 
+### On vCenter 
 
 ```
 $ ./vmxlab.py vcenter -h
@@ -237,7 +237,7 @@ optional arguments:
   --cluster CLUSTER     Cluster name
 ```
 
-## On NSX Manager
+### On NSX Manager
 
 ```
 $ ./vmxlab.py nsx -h
@@ -265,7 +265,7 @@ optional arguments:
   --port PORT           NSX API port
 ```
 
-## On FortiGate Service Manager
+### On FortiGate Service Manager
 
 ```
 $ ./vmxlab.py fortigate -h
@@ -290,20 +290,20 @@ optional arguments:
   --port PORT           FortiGate SSH port
 ```
 
-# Modules
+## Modules
 
 In the lib directory there are following modules providing procedures to communicate with different APIs
 
-## ESXi.py and vCenter.py
+### ESXi.py and vCenter.py
 
 Communication with (standalone) ESXi host or with VMware vCenter host. Both use VMware vSphere API implemented in Python by [pyVmomi](https://github.com/vmware/pyvmomi).
 
 For ESXi it also contains functions to erase the saved MAC addresses. This is done over SSH.
 
-## NSX.py
+### NSX.py
 
 Very simple NSX REST API implementation using [Requests](http://docs.python-requests.org/en/master/) and [ElementTree](https://docs.python.org/2/library/xml.etree.elementtree.html) for parsing the responses.
 
-## FortiGate.py
+### FortiGate.py
 
 The simplest communication with FortiGate Service Manager over SSH using [Paramiko](http://www.paramiko.org/).
