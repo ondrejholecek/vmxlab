@@ -10,7 +10,7 @@ The repository is composed of following parts:
   - [Utility vmxlab.py that combines all the APIs in simple command line tool](#vmxlab-utility)
   - [Python modules implementing different APIs that can be used in your programs](#modules)
 
-## shell scripts
+## Shell scripts
 
 These scripts are very simple scripts using the `vmxlab.py` utility described bellow. Those are not meant to be generic scripts at all, but they rather show what kind of commands with what parameters can be useful when setting up the lab. They also do not do any input validation and have some hardcoded values that expect certain setting of vCenter/NSX/ESxi/FortiGate.
 
