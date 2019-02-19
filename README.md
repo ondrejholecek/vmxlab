@@ -1,5 +1,5 @@
-# vmxlab
-Libraries and utilities to help setting the lab for VMware ESXi(s) managed by vCenter with (vSphere) NSX and FortiGate VMX.
+# VMXlab
+Libraries, utility and scripts designed to help setting up the lab for FortiGate VMX running in cooperation with VMware vSphere NSX Manager connected to VMware vCenter with managed ESXi host(s).
 
 :exclamation: **This is not production ready application!** It is rather a proof of concept, showing how different VMware APIs and FortiGate can work together to help setting up the test lab.
 
