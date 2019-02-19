@@ -23,10 +23,10 @@ The repository is composed of following parts:
 These scripts are very simple scripts using the `vmxlab.py` utility described bellow. Those are not meant to be generic scripts at all, but they rather show what kind of commands with what parameters can be useful when setting up the lab. They also do not do any input validation and have some hardcoded values that expect certain setting of vCenter/NSX/ESxi/FortiGate.
 
 Following shell scripts are available:
-  - [prepare_esxi to setup newly deployed ESXi hosts](#prepare-esxi-sh)
-  - [prepare_vcenter to setup newly deployed vCenter](#prepare-vcenter-sh)
-  - [prepare_nsx to setup newly deployed NSX manager and deploy FortiGate Service Manager](#prepare-nsx-sh)
-  - [prepare_test_vm to deploy and efficiently clone test Linux VMs](#prepare-test-vm-sh)
+  - [prepare_esxi to setup newly deployed ESXi hosts](#prepare_esxi-sh)
+  - [prepare_vcenter to setup newly deployed vCenter](#prepare_vcenter-sh)
+  - [prepare_nsx to setup newly deployed NSX manager and deploy FortiGate Service Manager](#prepare_nsx-sh)
+  - [prepare_test_vm to deploy and efficiently clone test Linux VMs](#prepare_test_vm-sh)
  
 ### prepare_esxi.sh
 
