@@ -3,6 +3,14 @@ Libraries and utilities to help setting the lab for VMware ESXi(s) managed by vC
 
 :exclamation: **This is not production ready application!** It is rather a proof of concept, showing how different VMware APIs and FortiGate can work together to help setting up the test lab.
 
+### Prerequisites
+
+  - Python 2.7 (`apt-get install python2.7` on Debian)
+  - Python PIP (`apt-get install python-pip` on Debian)
+  - `pip install pyvmomi paramiko pyopenssl requests-toolbelt` (or use your favourite packaging system)
+  - Download `https://github.com/ondrejholecek/vmxlab/archive/master.zip` and unzip
+  - ... or `git clone https://github.com/ondrejholecek/vmxlab.git`
+ 
 # Contents
 
 The repository is composed of following parts:
@@ -14,6 +22,12 @@ The repository is composed of following parts:
 
 These scripts are very simple scripts using the `vmxlab.py` utility described bellow. Those are not meant to be generic scripts at all, but they rather show what kind of commands with what parameters can be useful when setting up the lab. They also do not do any input validation and have some hardcoded values that expect certain setting of vCenter/NSX/ESxi/FortiGate.
 
+Following shell scripts are available:
+  - [prepare_esxi to setup newly deployed ESXi hosts](#prepare-esxi-sh)
+  - [prepare_vcenter to setup newly deployed vCenter](#prepare-vcenter-sh)
+  - [prepare_nsx to setup newly deployed NSX manager and deploy FortiGate Service Manager](#prepare-nsx-sh)
+  - [prepare_test_vm to deploy and efficiently clone test Linux VMs](#prepare-test-vm-sh)
+ 
 ### prepare_esxi.sh
 
 Guides you though initial setup of ESXi VM after deploying in DHCP VLAN. In two phases it removed the saved invalid MAC addresses and the default small local datastore.
@@ -154,6 +168,41 @@ Done
 
 Note: At this moment everything is prepared but no traffic is redirected to FortiGate VMX.
       To redirect traffic, you need to create a Security Group and apply it to default Policy.
+```
+
+### prepare_test_vm.sh
+
+This is not really used to build the NSX environment, but rather to deploy the local OVF file containing the Debian Linux template. 
+
+When uploaded, it will also allow to quickly and efficiently clone and automatically start one or more VMs based on that template.
+
+```
+$ ./prepare_test_vm.sh
+=============================
+=== Prepare test Linux VM ===
+=============================
+
+Enter the vCenter's IP address: 10.1.8.62
+Enter the VLAN ID used as default for the test VM: 4
+- Creating portgroup "vlan-4" on distributed switch "lab" with VLAN 4
+Created portgroup "vlan-4"
+Enter the directory with Debian VM teplate files ("debian-template.ovf" and "debian-template-1.vmdk"): /Users/oho/ISO/debian/ovf
+- Deploying the template VM
+Deployed VM "debian-template"
+Enter the name of VM to clone (empty line when done): Linux-A-1
+- Cloning the template VM to Linux-A-1
+Created VM "Linux-A-1"
+Enter the name of VM to clone (empty line when done): Linux-A-2
+- Cloning the template VM to Linux-A-2
+Created VM "Linux-A-2"
+Enter the name of VM to clone (empty line when done): Linux-B-1
+- Cloning the template VM to Linux-B-1
+Created VM "Linux-B-1"
+Enter the name of VM to clone (empty line when done): Linux-B-2
+- Cloning the template VM to Linux-B-2
+Created VM "Linux-B-2"
+Enter the name of VM to clone (empty line when done):
+- Done
 ```
 
 ## vmxlab utility
