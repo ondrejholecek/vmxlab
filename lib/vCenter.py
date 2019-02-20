@@ -41,8 +41,13 @@ class vCenter(VMwareCommon):
 				elif name == child.name: return child
 		return None
 
-	def create_cluster(self, dc, name):
-		cluster_spec = vim.ClusterConfigSpecEx()
+	def create_cluster(self, dc, name, drs=True):
+		cluster_spec = vim.ClusterConfigSpecEx(
+			drsConfig = vim.ClusterDrsConfigInfo(
+				enabled = drs,
+				defaultVmBehavior = 'partiallyAutomated',
+			),
+		)
 
 		return dc.hostFolder.CreateClusterEx(name, cluster_spec)
 	
