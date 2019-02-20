@@ -23,11 +23,20 @@ parser_esxi.add_argument('--port', default=443, type=int, help='ESXi vSphere API
 parser_esxi.add_argument('--sshport', default=22, type=int, help='ESXi ssh port')
 
 esxi_subparsers = parser_esxi.add_subparsers(dest='action')
+
 parser_esxi_ssh  = esxi_subparsers.add_parser('ssh', help='SSH service')
 parser_esxi_ssh_action = parser_esxi_ssh.add_mutually_exclusive_group(required=True)
 parser_esxi_ssh_action.add_argument('--status', action='store_true', help='Print current status')
 parser_esxi_ssh_action.add_argument('--enable', action='store_true', help='Start the service')
 parser_esxi_ssh_action.add_argument('--disable', action='store_true', help='Stop the service')
+
+parser_esxi_vmotion  = esxi_subparsers.add_parser('vmotion', help='vMotion service')
+parser_esxi_vmotion.add_argument('--interface', required=True, help='VMKernel NIC name')
+parser_esxi_vmotion_action = parser_esxi_vmotion.add_mutually_exclusive_group(required=True)
+parser_esxi_vmotion_action.add_argument('--status', action='store_true', help='Print current status')
+parser_esxi_vmotion_action.add_argument('--enable', action='store_true', help='Enable vMotion')
+parser_esxi_vmotion_action.add_argument('--disable', action='store_true', help='Disable vMotion')
+
 parser_esxi_thumbprint = esxi_subparsers.add_parser('thumbprint', help='Print SSL certificate thumbprint')
 parser_esxi_erasemac   = esxi_subparsers.add_parser('erase-mac', help='Erase hardcoded MAC address')
 parser_esxi_erasemac.add_argument('--phase', required=True, choices=['1', '2', '?'], help="Choose phase, 1 or 2, or ? to get the latest phase finished")
@@ -225,6 +234,21 @@ if args.section == 'esxi':
 		elif args.disable:
 			esxi.disable_ssh()
 			if args.verbose: print "SSH disabled on ESXi host %s" % (args.host,)
+
+	elif args.action == 'vmotion':
+		if args.status:
+			s = esxi.is_vmotion_enabled(args.interface)
+			if args.verbose: print 'Current vMotion status on host "%s" VMKernel NIC "%s":' % (args.host, args.interface,),
+			if s: print "enabled"
+			else: print "disabled"
+
+		elif args.enable:
+			esxi.enable_vmotion(args.interface)
+			if args.verbose: print 'vMotion enabled on ESXi host "%s" VMKernel NIC "%s"' % (args.host, args.interface,)
+
+		elif args.disable:
+			esxi.disable_vmotion(args.interface)
+			if args.verbose: print 'vMotion disabled on ESXi host "%s" VMKernel NIC "%s"' % (args.host, args.interface,)
 
 	elif args.action == 'thumbprint':
 		thumbprint = esxi.get_thumbprint()

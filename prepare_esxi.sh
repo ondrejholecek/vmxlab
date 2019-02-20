@@ -48,5 +48,7 @@ echo
 
 echo "- Removing default small datastore"
 $vmxlab $gparams esxi --host $esxi delete-datastore --locals
+echo "- Enabling vMotion service"
+$vmxlab $gparams esxi --host $esxi vmotion --interface vmk0 --enable
 
 echo "- Done"

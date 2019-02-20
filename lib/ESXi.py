@@ -43,6 +43,28 @@ class ESXi(VMwareCommon):
 			serviceSystem.UpdateServicePolicy(id=service_name, policy='off')
 	
 	###
+	### NIC services
+	###
+	def is_vmotion_enabled(self, nic):
+		hvnm = self.si.RetrieveContent().rootFolder.childEntity[0].hostFolder.childEntity[0].host[0].configManager.virtualNicManager
+		nics = {}
+		for n in hvnm.QueryNetConfig("vmotion").candidateVnic:
+			nics[n.key] = n.device
+
+		for key in hvnm.QueryNetConfig("vmotion").selectedVnic:
+			if (key in nics.keys()) and nics[key] == nic: return True
+
+		return False
+		
+	def enable_vmotion(self, nic):
+		hvnm = self.si.RetrieveContent().rootFolder.childEntity[0].hostFolder.childEntity[0].host[0].configManager.virtualNicManager
+		hvnm.SelectVnicForNicType("vmotion", nic)
+	
+	def disable_vmotion(self, nic):
+		hvnm = self.si.RetrieveContent().rootFolder.childEntity[0].hostFolder.childEntity[0].host[0].configManager.virtualNicManager
+		hvnm.DeselectVnicForNicType("vmotion", nic)
+	
+	###
 	### datastores
 	###
 	def list_datastores(self):
@@ -161,8 +183,11 @@ if __name__ == '__main__':
 	context.check_hostname = False
 	context.verify_mode = ssl.CERT_NONE
 
-	esxi = ESXi("192.168.1.106")
+	esxi = ESXi("12.3.4.5")
 	print esxi.get_thumbprint()
+	#esxi.enable_vmotion("vmk0")
+	#esxi.disable_vmotion("vmk0")
+	#print esxi.is_vmotion_enabled("vmk0")
 	#print esxi.is_ssh_enabled()
 	#esxi.enable_ssh()
 	#print esxi.is_ssh_enabled()
