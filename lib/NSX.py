@@ -300,7 +300,7 @@ class NSX:
 			group_id = allgroups[group['name']]['id']
 			groups.append({'id' : group_id})
 
-		self.create_security_policy(policy['name'], policy['description'], policy['precedence'], actions, groups)
+		self.create_security_policy(policy['name'], actions, policy['description'], policy['precedence'], groups)
 
 	def delete_policy(self, policy_id):
 		(status, text) = self.request('/api/2.0/services/policy/securitypolicy/%s?force=true' % (policy_id,), delete=True)
