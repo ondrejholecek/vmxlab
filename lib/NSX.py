@@ -25,7 +25,7 @@ class NSX:
 	###
 	### REST API management
 	###
-	def request(self, url, postdata=None, putdata=None, delete=False):
+	def request(self, url, postdata=None, putdata=None, delete=False, headers={}):
 		if url[0] == '/': url = url[1:]
 
 		if postdata != None:
@@ -41,12 +41,15 @@ class NSX:
 			fce  = requests.get
 			data = None
 
+		prepare_headers = {
+			'Accept': 'application/xml',
+			'Content-Type': 'application/xml',
+		}
+		prepare_headers.update(headers)
+
 		r = fce('https://%s/%s' % (self.ip, url,), 
 			auth=(self.user, self.password),
-			headers = {
-				'Accept': 'application/xml',
-				'Content-Type': 'application/xml',
-			},
+			headers = prepare_headers,
 			verify = False,
 			data = data,
 		)
@@ -358,8 +361,8 @@ if __name__ == '__main__':
 	context.check_hostname = False
 	context.verify_mode = ssl.CERT_NONE
 
-	nsx = NSX("10.109.80.65")
-	print nsx.get_thumbprint()
+	nsx = NSX("10.109.80.28")
+	#print nsx.get_thumbprint()
 
 	#nsx.request('/api/2.0/services/vcconfig')
 	#nsx.register_to_vcenter("192.168.1.103", "94:f5:2e:3d:1c:5a:aa:6a:06:5c:bf:ff:a1:2b:48:79:fe:d8:4f:99")
