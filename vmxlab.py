@@ -111,6 +111,16 @@ parser_vcenter_extenddvswitch.add_argument('--name', dest='dvswitch_name', requi
 parser_vcenter_extenddvswitch.add_argument('--host', dest='dvswitch_host', required=True, help='Host to extend to')
 parser_vcenter_extenddvswitch.add_argument('--nic', dest='dvswitch_nic', required=True, help='NIC name to connect as uplink')
 
+parser_vcenter_updateportgroup = vcenter_subparsers.add_parser('update-portgroup', help='Change PortGroup parameters')
+parser_vcenter_updateportgroup.add_argument('--dvs', dest='dvswitch_name', required=True, help='Name of the dvSwitch')
+parser_vcenter_updateportgroup.add_argument('--name', dest='portgroup_name', required=True, action='append', help='Name of the PortGroup')
+parser_vcenter_updateportgroup_target = parser_vcenter_updateportgroup.add_mutually_exclusive_group(required=True)
+parser_vcenter_updateportgroup_target.add_argument('--ports', dest='portgroup_ports', default=None, type=int, help='Port number to set')
+
+parser_vcenter_showportgroup = vcenter_subparsers.add_parser('show-portgroup', help='Show PortGroup(s) info')
+parser_vcenter_showportgroup.add_argument('--dvs', dest='dvswitch_name', required=True, help='Name of the dvSwitch')
+parser_vcenter_showportgroup.add_argument('--name', dest='portgroup_name', default=None, action='append', help='Name of the PortGroup')
+
 parser_vcenter_clonevm = vcenter_subparsers.add_parser('clone-vm', help='Light clone VM')
 parser_vcenter_clonevm.add_argument('--source', dest='clone_source', required=True, help='Name of the source VM')
 parser_vcenter_clonevm.add_argument('--start', dest='clone_start', action='store_true', default=False, help='Start the new VM')
@@ -360,6 +370,25 @@ elif args.section == 'vcenter':
 			sys.exit(1)
 
 		vcenter.extend_dvswitch(cluster, dvs, host, args.dvswitch_nic)
+
+	elif args.action == 'update-portgroup':
+		dvs = vcenter.get_dvswitch(datacenter, args.dvswitch_name)
+		if dvs == None:
+			print >>sys.stderr, 'Error: no such dvSwitch "%s"' % (args.dvswitch_name,)
+			sys.exit(1)
+
+		vcenter.update_portgroups(dvs, args.portgroup_name, ports=args.portgroup_ports)
+
+	elif args.action == 'show-portgroup':
+		dvs = vcenter.get_dvswitch(datacenter, args.dvswitch_name)
+		if dvs == None:
+			print >>sys.stderr, 'Error: no such dvSwitch "%s"' % (args.dvswitch_name,)
+			sys.exit(1)
+
+		pgs_info = vcenter.get_portgroups_info(dvs, args.portgroup_name)
+		print "%-30s %-18s %-8s %-5s" % ('portgroup', 'type', 'autoexpand', 'ports',)
+		for pgi in pgs_info:
+			print "%-30s %-18s %-8s %5i" % (pgi['name'], pgi['type'], pgi['autoexpand'], pgi['ports'],)
 
 	elif args.action == 'clone-vm':
 		source = vcenter.get_vm(datacenter, args.clone_source)

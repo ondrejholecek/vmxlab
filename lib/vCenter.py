@@ -159,6 +159,21 @@ class vCenter(VMwareCommon):
 		for pg in dvs.portgroup:
 			if pg.config.name == name: return pg
 		return None
+	
+	def get_portgroups_info(self, dvs, names=None):
+		pgs_info = []
+
+		for pg in dvs.portgroup:
+			if names != None and pg.config.name not in names: continue
+
+			pgs_info.append({
+				'name'       : pg.config.name,
+				'ports'      : pg.config.numPorts,
+				'autoexpand' : pg.config.autoExpand,
+				'type'       : pg.config.type,
+			})
+
+		return pgs_info
 
 	def get_network(self, dc, name):
 		for net in dc.networkFolder.childEntity:
@@ -185,6 +200,22 @@ class vCenter(VMwareCommon):
 
 		task = dvs.ReconfigureDvs_Task(spec)
 		return self.handle_task(task)
+
+	def update_portgroups(self, dvs, pgnames, ports=None):
+		for pg in dvs.portgroup:
+			pgname = pg.config.name
+			if pgname not in pgnames: continue
+			
+			spec = vim.DVPortgroupConfigSpec(
+				configVersion = pg.config.configVersion,
+			)
+
+			if ports != None:
+				spec.numPorts = ports
+
+			task = pg.ReconfigureDVPortgroup_Task(spec)
+			self.handle_task(task)
+			print pgname
 
 	###
 	### Tasks
